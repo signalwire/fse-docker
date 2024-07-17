@@ -1,5 +1,5 @@
 build:
-	@docker build -t docker-freeswitch . --build-arg FSA_USERNAME=$(FSA_USERNAME) --build-arg FSA_PASSWORD=$(FSA_PASSWORD)
+	@source ./env && docker build -t docker-freeswitch . --build-arg FSA_USERNAME=$$FSA_USERNAME --build-arg FSA_PASSWORD=$$FSA_PASSWORD --no-cache
 start:
 	@docker run -it -d --rm --name docker-freeswitch docker-freeswitch
 stop:
