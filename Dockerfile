@@ -35,6 +35,14 @@ RUN echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8
 # Install FreeSWITCH from packages
 RUN apt-get update && apt-get install -y freeswitch-meta-all
 
+# Copy any custom modules (mod directory) and install
+COPY mod /usr/src/mod
+RUN if [ -d /usr/src/mod ]; then  \
+    for file in $(ls /usr/src/mod); do \
+        dpkg -i /usr/src/mod/$file; \
+    done \
+    fi
+
 # CONFIGURATION (to be added as needed)
 # Set event_socket to localhost
 RUN sed -i 's/::/127.0.0.1/g' /etc/freeswitch/autoload_configs/event_socket.conf.xml
