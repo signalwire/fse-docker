@@ -27,8 +27,8 @@ RUN apt-get update && apt-get install -y \
     apt-transport-https
 
 # Set up apt with FSA repo
-RUN /usr/bin/wget --http-user=$FSA_USERNAME --http-password=$FSA_PASSWORD -O - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - 
 RUN echo "machine fsa.freeswitch.com login $FSA_USERNAME password $FSA_PASSWORD" > /etc/apt/auth.conf
+RUN /usr/bin/wget --http-user=$FSA_USERNAME --http-password=$FSA_PASSWORD -O - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - 
 RUN echo "deb https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" > /etc/apt/sources.list.d/freeswitch.list
 RUN echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" >> /etc/apt/sources.list.d/freeswitch.list
 
