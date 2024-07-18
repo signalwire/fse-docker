@@ -1,3 +1,6 @@
+# Pre-Requisite
+Place any Debian packages for modules in the mod directory.  These will be copied and installed to the image.
+
 # Using the Makefile
 
 1. ```cp env.example env```  
