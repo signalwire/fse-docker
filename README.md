@@ -3,7 +3,7 @@ Place any Debian packages for modules in the mod directory.  These will be copie
 
 # Using the Makefile
 
-1. ```cp env.example env```  
+1. ```cp secrets.env.example secrets.env```  
 Note:  Be sure to replace FSA_USERNAME and FSA_PASSWORD with FSA JIRA credentials!
 
 3. Build the image:
@@ -18,10 +18,12 @@ Note:  Be sure to replace FSA_USERNAME and FSA_PASSWORD with FSA JIRA credential
 
 # Using Dockerfile
 
-1.  Build the image:
-```docker build -t docker-freeswitch --build-arg='FSA_USERNAME=<YOUR_FSA_USERNAME>' --build-arg='FSA_PASSWORD=<YOUR_FSA_PASSWORD>'```
-Note:  Be sure to replcae FSA_USERNAME and FSA_PASSWORD with your FSA JIRA credentials!
+1. ```cp secrets.env.example secrets.env```  
+Note:  Be sure to replace FSA_USERNAME and FSA_PASSWORD with FSA JIRA credentials!
 
-2.  Run/Start the container:
+2.  Build the image:
+```docker build --secret id=secrets,src=./secrets.env -t docker-freeswitch .```
+
+3.  Run/Start the container:
 ```docker run -it docker-freeswitch```
 

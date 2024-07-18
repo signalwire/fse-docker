@@ -1,9 +1,5 @@
 FROM debian:bookworm-slim
 
-# Arguments passed from commandline
-ARG FSA_USERNAME
-ARG FSA_PASSWORD
-
 # Add FreeSwitch user and group
 RUN groupadd -r freeswitch && useradd -r -g freeswitch freeswitch
 
@@ -26,11 +22,14 @@ RUN apt-get update && apt-get install -y \
     software-properties-common     \
     apt-transport-https
 
-# Set up apt with FSA repo
-RUN echo "machine fsa.freeswitch.com login $FSA_USERNAME password $FSA_PASSWORD" > /etc/apt/auth.conf
-RUN /usr/bin/wget --http-user=$FSA_USERNAME --http-password=$FSA_PASSWORD -O - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - 
-RUN echo "deb https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" > /etc/apt/sources.list.d/freeswitch.list
-RUN echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" >> /etc/apt/sources.list.d/freeswitch.list
+# Set up apt with FSA stack repo creds
+RUN --mount=type=secret,id=secrets \
+    FSA_USERNAME=$(cat /run/secrets/secrets | grep 'FSA_USERNAME' | sed 's/FSA_USERNAME=//g' ); \
+    FSA_PASSWORD=$(cat /run/secrets/secrets | grep 'FSA_PASSWORD' | sed 's/FSA_PASSWORD=//g' ); \
+    echo "machine fsa.freeswitch.com login $FSA_USERNAME password $FSA_PASSWORD" > /etc/apt/auth.conf; \
+    usr/bin/wget --http-user=$FSA_USERNAME --http-password=$FSA_PASSWORD -O - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - ; \
+    echo "deb https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" > /etc/apt/sources.list.d/freeswitch.list; \
+    echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" >> /etc/apt/sources.list.d/freeswitch.list
 
 # Install FreeSWITCH from packages
 RUN apt-get update && apt-get install -y freeswitch-meta-all
