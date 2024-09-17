@@ -37,9 +37,10 @@ RUN apt-get update && apt-get install -y freeswitch-meta-all
 # Copy any custom modules (mod directory) and install
 COPY mod /usr/src/mod
 RUN if [ -d /usr/src/mod ]; then  \
-    for file in $(ls /usr/src/mod); do \
-        dpkg -i /usr/src/mod/$file; \
-    done \
+    for file in $(find /usr/src/mod/ -name "*.deb"); do \
+        dpkg -i $file; \
+    done; \
+    apt-get update && apt-get upgrade -y; \
     fi
 
 # CONFIGURATION (to be added as needed)
