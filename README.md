@@ -1,3 +1,13 @@
+# FSA Docker
+
+This repository provides a Docker setup for FreeSWITCH Advantage (FSA), ensuring reliable and scalable voice applications in a containerized environment.
+
+## About FreeSWITCH Advantage
+
+FreeSWITCH Advantage (FSA) is a professional support plan for FreeSWITCH, designed to ensure high reliability, enterprise-grade stability, and continuous performance improvements. It provides access to expert support and ensures that your voice applications perform optimally.
+
+For more information about FreeSWITCH Advantage, visit the [official page](https://signalwire.com/products/freeswitch-enterprise).
+
 # Pre-Requisite
 Place any Debian packages for modules in the mod directory.  These will be copied and installed to the image.
 
