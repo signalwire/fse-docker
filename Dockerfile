@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     telnet          \
     procps          \
     net-tools       \
+    curl            \
     software-properties-common     \
     apt-transport-https
 
@@ -27,7 +28,7 @@ RUN --mount=type=secret,id=secrets \
     FSA_USERNAME=$(cat /run/secrets/secrets | grep 'FSA_USERNAME' | sed 's/FSA_USERNAME=//g' ); \
     FSA_PASSWORD=$(cat /run/secrets/secrets | grep 'FSA_PASSWORD' | sed 's/FSA_PASSWORD=//g' ); \
     echo "machine fsa.freeswitch.com login $FSA_USERNAME password $FSA_PASSWORD" > /etc/apt/auth.conf; \
-    usr/bin/wget --http-user=$FSA_USERNAME --http-password=$FSA_PASSWORD -O - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - ; \
+    /usr/bin/curl --netrc-file /etc/apt/auth.conf -o - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - ; \
     echo "deb https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" > /etc/apt/sources.list.d/freeswitch.list; \
     echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" >> /etc/apt/sources.list.d/freeswitch.list
 
@@ -46,6 +47,9 @@ RUN if [ -d /usr/src/mod ]; then  \
 # CONFIGURATION (to be added as needed)
 # Set event_socket to localhost
 RUN sed -i 's/::/127.0.0.1/g' /etc/freeswitch/autoload_configs/event_socket.conf.xml
+
+# CLEAN UP
+RUN rm -f /etc/apt/auth.conf
 
 # Start FreeSwitch and drop into console
 # The startup switches can be changed to whatever is needed.
