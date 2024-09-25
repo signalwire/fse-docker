@@ -23,6 +23,9 @@ RUN apt-get update && apt-get install -y \
     software-properties-common     \
     apt-transport-https
 
+# Copy any custom modules (mod directory) and install
+COPY mod /usr/src/mod
+
 # Set up apt with FSA stack repo creds
 RUN --mount=type=secret,id=secrets \
     FSA_USERNAME=$(cat /run/secrets/secrets | grep 'FSA_USERNAME' | sed 's/FSA_USERNAME=//g' ); \
@@ -30,26 +33,20 @@ RUN --mount=type=secret,id=secrets \
     echo "machine fsa.freeswitch.com login $FSA_USERNAME password $FSA_PASSWORD" > /etc/apt/auth.conf; \
     /usr/bin/curl --netrc-file /etc/apt/auth.conf -o - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - ; \
     echo "deb https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" > /etc/apt/sources.list.d/freeswitch.list; \
-    echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" >> /etc/apt/sources.list.d/freeswitch.list
+    echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" >> /etc/apt/sources.list.d/freeswitch.list; \
+    apt-get update && apt-get install -y freeswitch-meta-all; \
+    if [ -d /usr/src/mod ]; then \
+        for file in $(find /usr/src/mod/ -name "*.deb"); do \
+            dpkg -i $file; \
+        done; \
+        apt-get update && apt-get upgrade -y; \
+    fi; \
+    rm -f /etc/apt/auth.conf
 
-# Install FreeSWITCH from packages
-RUN apt-get update && apt-get install -y freeswitch-meta-all
-
-# Copy any custom modules (mod directory) and install
-COPY mod /usr/src/mod
-RUN if [ -d /usr/src/mod ]; then  \
-    for file in $(find /usr/src/mod/ -name "*.deb"); do \
-        dpkg -i $file; \
-    done; \
-    apt-get update && apt-get upgrade -y; \
-    fi
 
 # CONFIGURATION (to be added as needed)
 # Set event_socket to localhost
 RUN sed -i 's/::/127.0.0.1/g' /etc/freeswitch/autoload_configs/event_socket.conf.xml
-
-# CLEAN UP
-RUN rm -f /etc/apt/auth.conf
 
 # Start FreeSwitch and drop into console
 # The startup switches can be changed to whatever is needed.
