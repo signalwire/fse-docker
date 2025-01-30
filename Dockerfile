@@ -34,9 +34,8 @@ COPY mod /usr/src/mod
 
 # Set up apt with FSA stack repo creds
 RUN --mount=type=secret,id=secrets \
-    FSA_USERNAME=$(cat /run/secrets/secrets | grep 'FSA_USERNAME' | sed 's/FSA_USERNAME=//g' ); \
-    FSA_PASSWORD=$(cat /run/secrets/secrets | grep 'FSA_PASSWORD' | sed 's/FSA_PASSWORD=//g' ); \
-    echo "machine fsa.freeswitch.com login $FSA_USERNAME password $FSA_PASSWORD" > /etc/apt/auth.conf; \
+    FSA_TOKEN=$(cat /run/secrets/secrets | grep 'FSA_TOKEN' | sed 's/FSA_TOKEN=//g' ); \
+    echo "machine fsa.freeswitch.com login signalwire password $FSA_TOKEN" > /etc/apt/auth.conf; \    
     /usr/bin/curl --netrc-file /etc/apt/auth.conf -o - https://fsa.freeswitch.com/repo/deb/fsa/pubkey.gpg | apt-key add - ; \
     echo "deb https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" > /etc/apt/sources.list.d/freeswitch.list; \
     echo "deb-src https://fsa.freeswitch.com/repo/deb/fsa/ `lsb_release -sc` 1.8" >> /etc/apt/sources.list.d/freeswitch.list; \
