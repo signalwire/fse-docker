@@ -6,10 +6,16 @@ RUN groupadd -r freeswitch && useradd -r -g freeswitch freeswitch
 # Open ports to container
 # NOTE: Recommended ports.  These can be adjusted as necessary.
 # ESL, SIP/SIPS, RTP
+EXPOSE 443/tcp
 EXPOSE 8021/tcp
-EXPOSE 5060/tcp 5060/udp
-EXPOSE 5080/tcp 5080/udp
-EXPOSE 5061/tcp 5081/tcp
+EXPOSE 5060/tcp 5060/udp 5080/tcp 5080/udp
+EXPOSE 6050/tcp 6050/udp
+EXPOSE 5061/tcp 5061/udp 5081/tcp 5081/udp
+EXPOSE 7443/tcp
+EXPOSE 5070/udp 5070/tcp
+EXPOSE 64535-65535/udp
+EXPOSE 16384-32768/udp
+EXPOSE 8081/tcp 8082/tcp
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
