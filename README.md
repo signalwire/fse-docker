@@ -1,6 +1,6 @@
 # FSA Docker
 
-This repository provides a Docker setup for FreeSWITCH Advantage (FSA), ensuring reliable and scalable voice applications in a containerized environment.
+This repository provides a Docker setup for FreeSWITCH Enterprise (FSE), ensuring reliable and scalable voice applications in a containerized environment.
 
 ## About FreeSWITCH Advantage
 
